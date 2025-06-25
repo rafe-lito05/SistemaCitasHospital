@@ -155,4 +155,67 @@ public class SistemaCitasHospital {
 
         return panel;
     }
+
+    private JPanel crearPanelVerCitas() {
+        JPanel panel = new JPanel(new BorderLayout(10, 10));
+        panel.setBackground(colorFondo);
+        panel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+
+        JPanel panelSuperior = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
+        panelSuperior.setBackground(colorFondo);
+
+        JLabel titulo = new JLabel("Listado de Citas Programadas");
+        titulo.setFont(fuenteTitulo);
+        titulo.setForeground(colorTexto);
+        panelSuperior.add(titulo);
+
+        JPanel panelFiltros = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        panelFiltros.setBackground(colorFondo);
+
+        panelFiltros.add(crearEtiqueta("Filtrar por ID Paciente:"));
+        JTextField txtIdPaciente = crearCampoTexto();
+        txtIdPaciente.setPreferredSize(new Dimension(150, 25));
+        panelFiltros.add(txtIdPaciente);
+
+        JButton btnBuscar = crearBoton("Filtrar", Color.WHITE);
+        panelFiltros.add(btnBuscar);
+
+        JButton btnMostrarTodas = crearBoton("Mostrar Todas", Color.WHITE);
+        panelFiltros.add(btnMostrarTodas);
+
+        panelSuperior.add(panelFiltros);
+        panel.add(panelSuperior, BorderLayout.NORTH);
+
+        JTextArea areaCitas = new JTextArea();
+        areaCitas.setFont(fuenteNormal);
+        areaCitas.setEditable(false);
+        areaCitas.setLineWrap(true);
+        areaCitas.setWrapStyleWord(true);
+
+        JScrollPane scrollPane = new JScrollPane(areaCitas);
+        scrollPane.setPreferredSize(new Dimension(900, 500));
+        scrollPane.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder("Citas Programadas"),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)
+        ));
+
+        panel.add(scrollPane, BorderLayout.CENTER);
+
+        mostrarTodasLasCitas(areaCitas);
+
+        btnBuscar.addActionListener(e -> {
+            String idPaciente = txtIdPaciente.getText().trim();
+            if (!idPaciente.isEmpty()) {
+                List<Cita> citasPaciente = gestorCitas.obtenerCitasPorPaciente(idPaciente);
+                mostrarCitasEnArea(areaCitas, citasPaciente, "Citas del paciente ID: " + idPaciente);
+            }
+        });
+
+        btnMostrarTodas.addActionListener(e -> {
+            mostrarTodasLasCitas(areaCitas);
+            txtIdPaciente.setText("");
+        });
+
+        return panel;
+    }
 }
