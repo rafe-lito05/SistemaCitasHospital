@@ -218,4 +218,144 @@ public class SistemaCitasHospital {
 
         return panel;
     }
+
+    private JPanel crearPanelGestionarCitas() {
+        JPanel panel = new JPanel(new BorderLayout(10, 10));
+        panel.setBackground(colorFondo);
+        panel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+
+        JPanel panelSuperior = new JPanel(new GridLayout(2, 1, 5, 5));
+        panelSuperior.setBackground(colorFondo);
+
+        JLabel titulo = new JLabel("Gestión de Citas");
+        titulo.setFont(fuenteTitulo);
+        titulo.setForeground(colorTexto);
+        titulo.setHorizontalAlignment(SwingConstants.CENTER);
+        panelSuperior.add(titulo);
+
+        JPanel panelBusqueda = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        panelBusqueda.setBackground(colorFondo);
+
+        panelBusqueda.add(crearEtiqueta("ID de Cita:"));
+        JTextField txtIdCita = crearCampoTexto();
+        txtIdCita.setPreferredSize(new Dimension(150, 25));
+        panelBusqueda.add(txtIdCita);
+
+        JButton btnBuscar = crearBoton("Buscar Cita", Color.WHITE);
+        panelBusqueda.add(btnBuscar);
+
+        panelSuperior.add(panelBusqueda);
+        panel.add(panelSuperior, BorderLayout.NORTH);
+
+        JPanel panelDetalles = new JPanel(new GridLayout(0, 2, 15, 10));
+        panelDetalles.setBackground(colorFondo);
+        panelDetalles.setBorder(BorderFactory.createTitledBorder("Detalles de la Cita"));
+
+        panelDetalles.add(crearEtiqueta("Especialidad:"));
+        JComboBox<String> cmbEspecialidad = new JComboBox<>(new String[]{
+                "Cardiología", "Dermatología", "Pediatría", "Neurología",
+                "Oftalmología", "Traumatología", "Ginecología"
+        });
+        estilizarCombo(cmbEspecialidad);
+        panelDetalles.add(cmbEspecialidad);
+
+        panelDetalles.add(crearEtiqueta("Fecha (dd/MM/yyyy):"));
+        JTextField txtFecha = crearCampoTexto();
+        panelDetalles.add(txtFecha);
+
+        panelDetalles.add(crearEtiqueta("Hora (HH:mm):"));
+        JTextField txtHora = crearCampoTexto();
+        panelDetalles.add(txtHora);
+
+        JButton btnActualizar = crearBoton("Actualizar Cita", Color.WHITE);
+        panelDetalles.add(btnActualizar);
+
+        JButton btnCancelar = crearBoton("Cancelar Cita", new Color(220, 80, 80));
+        btnCancelar.setForeground(Color.WHITE);
+        panelDetalles.add(btnCancelar);
+
+        panelDetalles.setEnabled(false);
+        for (Component c : panelDetalles.getComponents()) {
+            c.setEnabled(false);
+        }
+
+        panel.add(panelDetalles, BorderLayout.CENTER);
+
+        btnBuscar.addActionListener(e -> {
+            String idCita = txtIdCita.getText().trim();
+            if (idCita.isEmpty()) {
+                mostrarError(panel, "Por favor ingrese un ID de cita");
+                return;
+            }
+
+            Cita cita = gestorCitas.buscarCita(idCita);
+
+            if (cita == null) {
+                mostrarError(panel, "No se encontró una cita activa con ID: " + idCita);
+            } else {
+                panelDetalles.setEnabled(true);
+                for (Component c : panelDetalles.getComponents()) {
+                    c.setEnabled(true);
+                }
+
+                cmbEspecialidad.setSelectedItem(cita.getEspecialidad());
+                txtFecha.setText(cita.getFecha().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                txtHora.setText(cita.getHora().format(DateTimeFormatter.ofPattern("HH:mm")));
+            }
+        });
+
+        btnActualizar.addActionListener(e -> {
+            try {
+                LocalDate fecha = LocalDate.parse(txtFecha.getText(),
+                        DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                LocalTime hora = LocalTime.parse(txtHora.getText(),
+                        DateTimeFormatter.ofPattern("HH:mm"));
+
+                boolean actualizado = gestorCitas.actualizarCita(
+                        txtIdCita.getText(),
+                        cmbEspecialidad.getSelectedItem().toString(),
+                        fecha,
+                        hora
+                );
+
+                if (actualizado) {
+                    JOptionPane.showMessageDialog(panel, "Cita actualizada exitosamente!",
+                            "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    mostrarError(panel, "No se pudo actualizar la cita (puede estar cancelada)");
+                }
+            } catch (DateTimeParseException ex) {
+                mostrarError(panel, "Formato de fecha u hora incorrecto. Use dd/MM/yyyy para fecha y HH:mm para hora.");
+            } catch (Exception ex) {
+                mostrarError(panel, "Error inesperado: " + ex.getMessage());
+            }
+        });
+
+        btnCancelar.addActionListener(e -> {
+            int confirmacion = JOptionPane.showConfirmDialog(
+                    panel,
+                    "¿Está seguro que desea cancelar esta cita?",
+                    "Confirmar Cancelación",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE
+            );
+
+            if (confirmacion == JOptionPane.YES_OPTION) {
+                boolean cancelada = gestorCitas.cancelarCita(txtIdCita.getText());
+                if (cancelada) {
+                    JOptionPane.showMessageDialog(panel, "Cita cancelada exitosamente!",
+                            "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                    panelDetalles.setEnabled(false);
+                    for (Component c : panelDetalles.getComponents()) {
+                        c.setEnabled(false);
+                    }
+                    txtIdCita.setText("");
+                } else {
+                    mostrarError(panel, "No se pudo cancelar la cita (puede que ya esté cancelada)");
+                }
+            }
+        });
+
+        return panel;
+    }
 }
