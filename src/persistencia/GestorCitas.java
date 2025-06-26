@@ -70,5 +70,17 @@ public class GestorCitas {
         }
         return false;
     }
-  
+
+   public boolean actualizarCita(String idCita, String especialidad, LocalDate fecha, LocalTime hora) {
+        for (Cita cita : citas) {
+            if (cita.getIdCita().equals(idCita) && cita.isActiva()) {
+                cita.setEspecialidad(especialidad);
+                cita.setFecha(fecha);
+                cita.setHora(hora);
+                guardarCitas();
+                return true;
+            }
+        }
+        return false;
+    }
 }
