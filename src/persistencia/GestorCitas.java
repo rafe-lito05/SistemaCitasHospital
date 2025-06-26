@@ -39,5 +39,25 @@ public class GestorCitas {
         citas.add(cita);
         guardarCitas();
     }
+
+   public List<Cita> obtenerCitasPorPaciente(String idPaciente) {
+        List<Cita> citasPaciente = new ArrayList<>();
+        for (Cita cita : citas) {
+            if (cita.getIdPaciente().equals(idPaciente) && cita.isActiva()) {
+                citasPaciente.add(cita);
+            }
+        }
+        return citasPaciente;
+    }
+
+    public List<Cita> obtenerTodasLasCitas() {
+        List<Cita> citasActivas = new ArrayList<>();
+        for (Cita cita : citas) {
+            if (cita.isActiva()) {
+                citasActivas.add(cita);
+            }
+        }
+        return citasActivas;
+    }
   
 }
