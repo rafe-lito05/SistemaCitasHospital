@@ -18,6 +18,11 @@ public class Cita implements Serializable {
 
     public Cita(String idCita, String idPaciente, String nombrePaciente,
                 String especialidad, LocalDate fecha, LocalTime hora) {
+
+        if (fecha.isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("La fecha de la cita no puede ser anterior a la fecha actual");
+        }
+        
         this.idCita = idCita;
         this.idPaciente = idPaciente;
         this.nombrePaciente = nombrePaciente;
