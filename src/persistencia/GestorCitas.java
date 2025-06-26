@@ -102,4 +102,17 @@ public class GestorCitas {
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
+   private void cargarCitas() {
+        File file = new File(ARCHIVO_CITAS);
+        if (file.exists()) {
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+                citas = (List<Cita>) ois.readObject();
+            } catch (IOException | ClassNotFoundException e) {
+                JOptionPane.showMessageDialog(null,
+                        "Error al cargar citas: " + e.getMessage(),
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
 }
