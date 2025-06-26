@@ -358,4 +358,78 @@ public class SistemaCitasHospital {
 
         return panel;
     }
+
+    // Métodos auxiliares
+    private JLabel crearEtiqueta(String texto) {
+        JLabel label = new JLabel(texto);
+        label.setFont(fuenteNormal);
+        label.setForeground(colorTexto);
+        return label;
+    }
+
+    private JTextField crearCampoTexto() {
+        JTextField campo = new JTextField();
+        campo.setFont(fuenteNormal);
+        campo.setPreferredSize(new Dimension(200, 25));
+        return campo;
+    }
+
+    private JButton crearBoton(String texto, Color colorFondo) {
+        JButton boton = new JButton(texto);
+        boton.setFont(fuenteNormal);
+        boton.setBackground(colorFondo);
+        boton.setForeground(colorTexto);
+        boton.setFocusPainted(false);
+        boton.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(colorBoton, 1),
+                BorderFactory.createEmptyBorder(5, 15, 5, 15)
+        ));
+        return boton;
+    }
+
+    private void estilizarCombo(JComboBox<String> combo) {
+        combo.setFont(fuenteNormal);
+        combo.setBackground(Color.WHITE);
+        combo.setForeground(colorTexto);
+    }
+
+    private void mostrarError(Component parent, String mensaje) {
+        JOptionPane.showMessageDialog(parent, mensaje,
+                "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    private void mostrarTodasLasCitas(JTextArea areaCitas) {
+        List<Cita> todasLasCitas = gestorCitas.obtenerTodasLasCitas();
+        mostrarCitasEnArea(areaCitas, todasLasCitas, "TODAS LAS CITAS ACTIVAS");
+    }
+
+    private void mostrarCitasEnArea(JTextArea areaCitas, List<Cita> citas, String titulo) {
+        if (citas.isEmpty()) {
+            areaCitas.setText("No se encontraron citas programadas.");
+        } else {
+            StringBuilder sb = new StringBuilder();
+            sb.append("=== ").append(titulo).append(" ===\n\n");
+            for (Cita cita : citas) {
+                sb.append(cita.toString()).append("\n\n");
+            }
+            areaCitas.setText(sb.toString());
+            areaCitas.setCaretPosition(0);
+        }
+    }
+
+    private void limpiarCampos(JTextField... campos) {
+        for (JTextField campo : campos) {
+            campo.setText("");
+        }
+    }
+
+    public static void main(String[] args) {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        SwingUtilities.invokeLater(() -> new SistemaCitasHospital());
+    }
 }
