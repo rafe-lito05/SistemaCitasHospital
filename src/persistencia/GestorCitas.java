@@ -59,5 +59,16 @@ public class GestorCitas {
         }
         return citasActivas;
     }
+
+   public boolean cancelarCita(String idCita) {
+        for (Cita cita : citas) {
+            if (cita.getIdCita().equals(idCita) && cita.isActiva()) {
+                cita.setActiva(false);
+                guardarCitas();
+                return true;
+            }
+        }
+        return false;
+    }
   
 }
