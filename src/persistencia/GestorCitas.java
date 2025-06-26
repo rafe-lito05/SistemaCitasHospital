@@ -10,4 +10,34 @@ import javax.swing.JOptionPane;
 
 public class GestorCitas {
 
+   private static final String ARCHIVO_CITAS = "citas.dat";
+    private List<Cita> citas;
+
+    public GestorCitas() {
+        citas = new ArrayList<>();
+        cargarCitas();
+    }
+
+    public String generarNuevoIdCita() {
+        int ultimoNumero = 0;
+        for (Cita c : citas) {
+            if (c.getIdCita().startsWith("CITA-")) {
+                try {
+                    int numero = Integer.parseInt(c.getIdCita().substring(5));
+                    if (numero > ultimoNumero) {
+                        ultimoNumero = numero;
+                    }
+                } catch (NumberFormatException e) {
+                    // Ignorar IDs con formato incorrecto
+                }
+            }
+        }
+        return "CITA-" + (ultimoNumero + 1);
+    }
+
+    public void agregarCita(Cita cita) {
+        citas.add(cita);
+        guardarCitas();
+    }
+  
 }
