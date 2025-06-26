@@ -83,4 +83,23 @@ public class GestorCitas {
         }
         return false;
     }
+
+   public Cita buscarCita(String idCita) {
+        for (Cita cita : citas) {
+            if (cita.getIdCita().equals(idCita) && cita.isActiva()) {
+                return cita;
+            }
+        }
+        return null;
+    }
+
+    private void guardarCitas() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(ARCHIVO_CITAS))) {
+            oos.writeObject(citas);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null,
+                    "Error al guardar citas: " + e.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 }
