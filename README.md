@@ -50,6 +50,7 @@ jar cvfe SistemaCitasHospital.jar vista.SistemaCitasHospital -C bin .
 java -jar SistemaCitasHospital.jar
 
 **Uso de la aplicación**
+
 La aplicación cuenta con tres módulos principales:
 
 1. Programar Cita
@@ -81,6 +82,7 @@ Validación de cambios
 
 
 **Tecnologías utilizadas**
+
 Java SE 23
 
 Swing para la interfaz gráfica
